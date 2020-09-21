@@ -3,7 +3,9 @@ package com.example.tictactoe;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -22,6 +24,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextView textViewP1;
     private TextView textViewP2;
+
+    private MediaPlayer winMP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
+
+
         if (!((Button) v).getText().toString().equals(""))
         {
             return;
@@ -62,8 +68,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (p1Turn)
         {
             ((Button) v).setText("X");
+            v.setBackgroundResource(R.drawable.marvel_2);
         } else {
             ((Button) v).setText("O");
+            v.setBackgroundResource(R.drawable.dc);
         }
 
         rdCount++;
@@ -125,39 +133,67 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void p1Wins()
     {
+        winMP = MediaPlayer.create(this, R.raw.win);
+        winMP.start();
+        
         p1Points++;
-        Toast.makeText(this, "Player 1 Wins!", Toast.LENGTH_SHORT). show();
+        Toast.makeText(this, "Marvel Wins!", Toast.LENGTH_SHORT). show();
         updatePointsText();
-        resetBoard();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                resetBoard();
+            }
+        }, 2000);
+
     }
 
     private void p2Wins()
     {
+        winMP = MediaPlayer.create(this, R.raw.win);
+        winMP.start();
+
         p2Points++;
-        Toast.makeText(this, "Player 2 Wins!", Toast.LENGTH_SHORT). show();
+        Toast.makeText(this, "DC Wins!", Toast.LENGTH_SHORT). show();
         updatePointsText();
-        resetBoard();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                resetBoard();
+            }
+        }, 2000);
     }
 
     private void draw()
     {
-        Toast.makeText(this, "Draw!", Toast.LENGTH_SHORT).show();
-        resetBoard();
+        Toast.makeText(this, "Draw (Marvel is still better though)!", Toast.LENGTH_SHORT).show();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                resetBoard();
+            }
+        }, 1000);
     }
 
     private void updatePointsText()
     {
-        textViewP1.setText("Player 1: " + p1Points);
-        textViewP2.setText("Player 2: " + p2Points);
+        textViewP1.setText("Marvel: " + p1Points);
+        textViewP2.setText("DC:     " + p2Points);
     }
 
     private void resetBoard()
     {
+        Button[][] resetButton = new Button[3][3];
+
         for (int i = 0; i < 3; i++)
         {
             for (int j = 0; j < 3; j++)
             {
                 buttons[i][j].setText("");
+                buttons[i][j].setBackgroundResource(R.color.backgroundBlack);
             }
         }
 
@@ -191,5 +227,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         p1Points = savedInstanceState.getInt("player1Points");
         p2Points = savedInstanceState.getInt("player2Points");
         p1Turn = savedInstanceState.getBoolean("player1Turn");
+
+        restoreImages();
+    }
+
+    void restoreImages() {
+        for (int i = 0; i < 3; i++)
+        {
+            for (int j = 0; j < 3; j++)
+            {
+                Button thisButton = buttons[i][j];
+
+                if (thisButton.getText().equals("X")) {
+                    thisButton.setBackgroundResource(R.drawable.marvel_2);
+                } else if (thisButton.getText().equals("O")) {
+                    thisButton.setBackgroundResource(R.drawable.dc);
+                }
+            }
+        }
     }
 }
