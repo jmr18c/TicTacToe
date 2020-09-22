@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,11 +28,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textViewP2;
 
     private MediaPlayer winMP;
+    private MediaPlayer drawMP;
+
+    ImageView winImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        winImageView = findViewById(R.id.trophy_IV);
 
         textViewP1 = findViewById(R.id.text_view_p1);
         textViewP2 = findViewById(R.id.text_view_p2);
@@ -136,6 +142,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         winMP = MediaPlayer.create(this, R.raw.win);
         winMP.start();
+
+        winImageView.setVisibility(View.VISIBLE);
         
         p1Points++;
         Toast.makeText(this, "Marvel Wins!", Toast.LENGTH_SHORT). show();
@@ -145,8 +153,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 resetBoard();
+                winImageView.setVisibility(View.INVISIBLE);
             }
-        }, 2000);
+        }, 3000);
 
     }
 
@@ -154,6 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     {
         winMP = MediaPlayer.create(this, R.raw.win);
         winMP.start();
+
+        winImageView.setVisibility(View.VISIBLE);
 
         p2Points++;
         Toast.makeText(this, "DC Wins!", Toast.LENGTH_SHORT). show();
@@ -163,12 +174,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 resetBoard();
+                winImageView.setVisibility(View.INVISIBLE);
             }
-        }, 2000);
+        }, 3000);
     }
 
     private void draw()
     {
+        drawMP = MediaPlayer.create(this, R.raw.draw_crickets);
+        drawMP.start();
+
         Toast.makeText(this, "Draw (Marvel is still better though)!", Toast.LENGTH_SHORT).show();
 
         new Handler().postDelayed(new Runnable() {
@@ -176,7 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void run() {
                 resetBoard();
             }
-        }, 1000);
+        }, 3000);
     }
 
     private void updatePointsText()
